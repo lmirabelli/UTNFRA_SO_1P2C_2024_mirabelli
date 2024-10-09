@@ -1,46 +1,16 @@
 #!/bin/bash
-sudo fdisk /dev/sdc
-n
-p
 
+# Crear particiones usando parted
+sudo parted /dev/sdc --script mklabel gpt # Crear tabla de particiones GPT
 
-+1G
-n
-p
+# Crear las particiones de 1GB cada una
+for i in {1..3}; do
+  sudo parted /dev/sdc --script mkpart primary ext4 $(($i * 1))GB $(($i * 1 + 1))GB
+done
 
-
-+1G
-n
-p
-
-
-+1G
-n
-e
-
-
-n
-
-+1G
-n
-
-+1G
-n
-
-+1G
-n
-
-+1G
-n
-
-+1G
-n
-
-+1G
-n
-
-
-w
+for i in {5..11}; do
+  sudo parted /dev/sdc --script mkpart primary ext4 $(($i * 1 - 1))GB $(($i * 1))GB
+done
 #Para saber si funciono la particion de los discos
 sudo fdisk /dev/sdc -l
 sudo mkfs.ext4 /dev/sdc1
